@@ -1,3 +1,12 @@
+
+/*
+* =============================================================================================
+* ||                                                                                          ||
+* ||                       VOTE + 1 STAR TO THIS REPOSIRORY FOR ME THANKS U                   ||
+* ||                                                                                          ||
+* =============================================================================================
+*/
+
 const Web3 = require('web3');
 const provider = "https://rpc-mainnet.matic.network";
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
@@ -17,6 +26,8 @@ const BATTLE_ADDRESS = "0x9aA2F05b70386fFe0A273C757fE02C21da021d62";
 const BATTLE_ABI = require("./battle_abi.json");
 const CONTRACT_BATTLE = new web3.eth.Contract(BATTLE_ABI, BATTLE_ADDRESS);
 
+//if u are developer and u want to debug this source, replace its true value
+const DEBUG = false;
 
 //1. Input your address and private key to wallet variable.
 var wallet = {
@@ -114,7 +125,9 @@ module.exports = {
         await that.fight(pet_fight, monster_fight, win_percent_fight);
       }
 
-    } catch {}
+    } catch (err) {
+      if (DEBUG) console.log(err);
+    }
     //re-fight after 1s
     setTimeout(function() {
       that.fightSchedule();
@@ -190,6 +203,7 @@ module.exports = {
         console.log(`==|===> FIGHT ERROR <===|==`);
       }
     } catch (err) {
+      if (DEBUG) console.log(err);
       console.log(`==|===> FIGHT ERROR <===|==`);
     }
   },
