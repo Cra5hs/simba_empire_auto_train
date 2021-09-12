@@ -102,14 +102,14 @@ module.exports = {
             }
           }
 
-          //if find monster => break
+          //if found monster => break
           if (pet_fight && monster_fight && win_percent_fight) {
             break;
           }
         }
       }
 
-      //if find monster => fight
+      //if found monster => fight
       if (pet_fight && monster_fight && win_percent_fight) {
         await that.fight(pet_fight, monster_fight, win_percent_fight);
       }
