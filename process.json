@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+        "name": "simba-autofight",
+        "script": "./bin/www",
+        "port": "8888",
+        "env": {
+
+        }
+    }
+  ]
+}
