@@ -24,6 +24,28 @@ var wallet = {
   private_key: "Your private key"
 };
 
+// ======= Winning Rewards =======
+// 🔴 Low --- 🟠 Medium --- 🟢 High
+//
+// Chain: Polygon (Matic)
+// Auto Refresh: 5 seconds
+//
+// 🔴 Bat - 0.056 SIM  (🙍‍♂0)
+// 🔴 Boar - 0.106 SIM  (🙍‍♂0)
+// 🔴 Golem - 0.222 SIM  (🙍‍♂0)
+// 🟢 Dinosaur - 0.607 SIM  (🙍‍♂5)
+// 🔴 Ice Golem - 0.98 SIM  (🙍‍♂2)
+// 🔴 Orc - 1.73 SIM  (🙍‍♂6)
+// 🔴 Skeleton - 5.975 SIM  (🙍‍♂4)
+// 🟢 Turtle - 17.578 SIM  (🙍‍♂3)
+// 🟠 Witcher - 29.096 SIM  (🙍‍♂6)
+// 🟠 Worm - 61.961 SIM  (🙍‍♂7)
+// 🔴 Wolf - 79.967 SIM  (🙍‍♂5)
+// 🟢 Zombie - 176.741 SIM  (🙍‍♂1)
+// 🔴 Ape - 198.374 SIM  (🙍‍♂5)
+// 🔴 Jungle Ghost - 466.032 SIM  (🙍‍♂5)
+//
+
 // Set reward u want !
 //0: Low
 //1: Medium
@@ -42,63 +64,64 @@ module.exports = {
 
   //fight schedule
   async fightSchedule() {
-    console.log("==== FIGHT ====");
+    try {
+      console.log("==|===> FINDING MATCH <===|==");
 
-    //fetch your pets
-    var pets = await this.fetchMyPets();
+      //fetch your pets
+      var pets = await this.fetchMyPets();
 
-    //fetch monster in maps
-    var monsters = await this.fetchMonsters();
-    var that = this;
-    var pet_fight, monster_fight, win_percent_fight;
+      //fetch monster in maps
+      var monsters = await this.fetchMonsters();
+      var that = this;
+      var pet_fight, monster_fight, win_percent_fight;
 
-    //find and match fight
-    for (var i = 0; i < pets.length; i++) {
-      var pet = pets[i];
-      //if pet has fight_count >= 5 => say no!
-      if (!pet.fight_available) continue;
+      //find and match fight
+      for (var i = 0; i < pets.length; i++) {
+        var pet = pets[i];
+        //if pet has fight_count >= 5 => say no!
+        if (!pet.fight_available) continue;
 
-      //find monsters
-      for (var j = 0; j < monsters.length; j++) {
-        var monster = monsters[j];
-        var win_percent = that.winPercent(pet, monster);
-        const pet_level = parseInt(pet.level);
-        const monster_level = parseInt(monster.id);
+        //find monsters
+        for (var j = 0; j < monsters.length; j++) {
+          var monster = monsters[j];
+          var win_percent = that.winPercent(pet, monster);
+          const pet_level = parseInt(pet.level);
+          const monster_level = parseInt(monster.id);
 
-        //if win_percent > 75% and monster level >= your pet level => fight
-        if (win_percent >= min_win_percent && monster_level >= pet_level) {
+          //if win_percent > 75% and monster level >= your pet level => fight
+          if (win_percent >= min_win_percent && monster_level >= pet_level) {
 
-          //if reward is low => say no !!
-          if (fight_reward.includes(monster.level_reward)) {
-            pet_fight = pet;
-            monster_fight = monster;
-            win_percent_fight = win_percent;
+            //if reward is low => say no !!
+            if (fight_reward.includes(monster.level_reward)) {
+              pet_fight = pet;
+              monster_fight = monster;
+              win_percent_fight = win_percent;
+              break;
+            } else {
+              console.log(`[RW LOW LEVEL, PLS WAIT] RATE = ${win_percent}% ==|===> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power} <===|==`);
+            }
+          }
+
+          //if find monster => break
+          if (pet_fight && monster_fight && win_percent_fight) {
             break;
-          } else {
-            console.log(`[RW LOW LEVEL, PLS WAIT] RATE = ${win_percent}% ==|====> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power}`);
           }
         }
-
-        //if find monster => break
-        if (pet_fight && monster_fight && win_percent_fight) {
-          break;
-        }
       }
-    }
 
+      //if find monster => fight
+      if (pet_fight && monster_fight && win_percent_fight) {
+        await that.fight(pet_fight, monster_fight, win_percent_fight);
+      }
 
-    //if find monster => fight
-    if (pet_fight && monster_fight && win_percent_fight) {
-      await that.fight(pet_fight, monster_fight, win_percent_fight);
-    }
-
+    } catch {}
     //re-fight after 1s
     setTimeout(function() {
       that.fightSchedule();
     }, 1000);
   },
 
-  
+
   async fetchMyPets() {
     var that = this;
     const total = await CONTRACT_ANIMAL.methods.balanceOf(wallet.address).call();
@@ -140,8 +163,35 @@ module.exports = {
   },
 
   async fight(pet, monster, win_percent) {
-    console.log(`[FIGHT]RATE = ${win_percent}% ==|====> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power}`);
-    await CONTRACT_BATTLE.methods.fight(pet.id, monster.id).call();
+    try {
+      console.log(`[FIGHT] RATE = ${win_percent}% ==|===> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power} <===|==`);
+      var transaction = CONTRACT_BATTLE.methods.fight(pet.id, monster.id);
+      var estimateGas = await transaction.estimateGas({
+        from: wallet.address
+      });
+      var gasPrice = await web3.eth.getGasPrice();
+      const options = {
+        to: BATTLE_ADDRESS,
+        data: transaction.encodeABI(),
+        gas: estimateGas,
+        gasPrice: gasPrice
+      };
+      const signed = await web3.eth.accounts.signTransaction(options, wallet.private_key);
+      const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
+      if (receipt) {
+        const is_win = receipt.events["Win"];
+        if (is_win) {
+          var reward = this.cryptoConvert('decode', receipt.events["Win"]["returnValues"]["prize"], SIM_DECIMAL);
+          console.log(`==|===> WIN ${reward} SIM <===|==`);
+        } else {
+          console.log(`==|===> LOSE <===|==`);
+        }
+      } else {
+        console.log(`==|===> FIGHT ERROR <===|==`);
+      }
+    } catch (err) {
+      console.log(`==|===> FIGHT ERROR <===|==`);
+    }
   },
 
   getMonsterMaps(rawData) {
@@ -215,14 +265,14 @@ module.exports = {
   winPercent(pet, monster) {
     var animalPower = pet.power;
     var monsterPower = monster.power;
-    if (pet.cl == monster.cl) {
+    if (pet.cl == monster.cl) { //if pet & monster same color, increase power of your pet
       animalPower = animalPower + (animalPower * 0.15);
-    } else {
+    } else { //else deincrease
       animalPower = animalPower - (animalPower * 0.15);
     }
     var exp = pet.exp;
     if (animalPower <= 0 || monsterPower < 0) return 0;
-    let value = ((animalPower / monsterPower) * 100) + exp * 0.1;
+    let value = ((animalPower / monsterPower) * 100) + exp * 0.1; //1 exp will increase 0.1% win rate
     if (value > 99) return 99;
     return value;
   },
