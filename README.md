@@ -1,10 +1,10 @@
 # simba_empire_auto_train
-
+**
 ⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️ <br/>
 If you share the private key with a stranger, you will lose all your money, so you need to keep it carefully. You need to understand the source code to enter the private key. <br/>
 
 Please do not share the private key with anyone, including relatives.<br/>
-⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️
+⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️**
 
 How to start:
 
@@ -18,19 +18,19 @@ Edit:
 private key = metamask => Account => Account details => Export private key
 ```
 
-Let's go autotrain 
+Let's go auto train 
 ```
 //0: Low
 //1: Medium
 //2: High
 
 //Sample: just only fight if reward is high
-var fight_reward = [2]; // YOU NEED EDIT IT
+var fight_reward = [1, 2]; 
 ```
 
 ```
 //Just only fight if win percent >= 75%
-var min_win_percent = 75; // YOU NEED EDIT IT
+var min_win_percent = 75;
 ```
 
 ```
