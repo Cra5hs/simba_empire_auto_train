@@ -1,12 +1,12 @@
 # simba_empire_auto_train
 
-<b>⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️ <br/>
-If you share the private key with a stranger, you will lose all your money, so you need to keep it carefully. You need to understand the source code to enter the private key. <br/>
+**⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️ <br/>
+If you share the private key with a stranger, you will lose all your money, so you need to keep it carefully. You need to understand the source code to enter the private key. <br/>**
 
-Please do not share the private key with anyone, including relatives.<br/>
-⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️<b/>
+**Please do not share the private key with anyone, including relatives.<br/>
+⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️**
 
-How to start:
+**How to start:**
 
 1.  Install nodejs
 2.  Open terminal and ```cd {simba_empire_auto_train folder}```
@@ -18,7 +18,7 @@ Edit:
 private key = metamask => Account => Account details => Export private key
 ```
 
-Let's go auto train 
+**Let's go auto train **
 ```
 //0: Low
 //1: Medium
