@@ -18,6 +18,7 @@ Edit:
 private key = metamask => Account => Account details => Export private key
 ```
 
+Let's go autotrain 
 ```
 //0: Low
 //1: Medium
