@@ -4,7 +4,6 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const MonsterInfo = require("./monster_info");
 
-
 const MONSTER_IN_ONE_MAP = 19;
 
 const SIM_DECIMAL = 18;
@@ -19,20 +18,21 @@ const BATTLE_ABI = require("./battle_abi.json");
 const CONTRACT_BATTLE = new web3.eth.Contract(BATTLE_ABI, BATTLE_ADDRESS);
 
 
+//1. Input your address and private key to wallet variable.
 var wallet = {
   address: "Your address",
   private_key: "Your private key"
 };
 
+// Set reward u want !
 //0: Low
 //1: Medium
 //2: High
+//Default: just only fight if reward is high or medium
+var fight_reward = [1, 2];
 
-//Sample: just only fight if reward is high
-var fight_reward = [2]; // YOU NEED EDIT IT
-
-//Just only fight if win percent >= 75%
-var min_win_percent = 75; // YOU NEED EDIT IT
+//Default: Just only fight if win percent >= 75%
+var min_win_percent = 75;
 
 module.exports = {
   async run() {
@@ -40,24 +40,35 @@ module.exports = {
     this.fightSchedule();
   },
 
+  //fight schedule
   async fightSchedule() {
     console.log("==== FIGHT ====");
+
+    //fetch your pets
     var pets = await this.fetchMyPets();
+
+    //fetch monster in maps
     var monsters = await this.fetchMonsters();
     var that = this;
-
     var pet_fight, monster_fight, win_percent_fight;
 
+    //find and match fight
     for (var i = 0; i < pets.length; i++) {
       var pet = pets[i];
+      //if pet has fight_count >= 5 => say no!
       if (!pet.fight_available) continue;
+
+      //find monsters
       for (var j = 0; j < monsters.length; j++) {
         var monster = monsters[j];
         var win_percent = that.winPercent(pet, monster);
-
         const pet_level = parseInt(pet.level);
         const monster_level = parseInt(monster.id);
+
+        //if win_percent > 75% and monster level >= your pet level => fight
         if (win_percent >= min_win_percent && monster_level >= pet_level) {
+
+          //if reward is low => say no !!
           if (fight_reward.includes(monster.level_reward)) {
             pet_fight = pet;
             monster_fight = monster;
@@ -67,18 +78,27 @@ module.exports = {
             console.log(`[RW LOW LEVEL, PLS WAIT] RATE = ${win_percent}% ==|====> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power}`);
           }
         }
+
+        //if find monster => break
+        if (pet_fight && monster_fight && win_percent_fight) {
+          break;
+        }
       }
     }
 
 
+    //if find monster => fight
     if (pet_fight && monster_fight && win_percent_fight) {
       await that.fight(pet_fight, monster_fight, win_percent_fight);
     }
+
+    //re-fight after 1s
     setTimeout(function() {
       that.fightSchedule();
     }, 1000);
   },
 
+  
   async fetchMyPets() {
     var that = this;
     const total = await CONTRACT_ANIMAL.methods.balanceOf(wallet.address).call();
