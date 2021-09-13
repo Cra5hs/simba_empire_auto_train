@@ -31,7 +31,7 @@ const DEBUG = false;
 //1. Input your address and private key to wallet variable.
 var wallet = {
   address: "your address",
-  private_key: "your private key "
+  private_key: "your private key"
 };
 
 // ======= Winning Rewards =======
@@ -66,8 +66,9 @@ var fight_rewards = [1, 2];
 //Default: Just only fight if win percent >= 70%
 var min_win_percent = 70;
 
-//Just only fight if pet level >= 7
-var require_pet_level = 7;
+//Just only fight if pet has level in range 7 -> 19
+var begin_pet_level = 7;
+var end_pet_level = 19;
 
 module.exports = {
   async run() {
@@ -94,7 +95,8 @@ module.exports = {
       for (var i = 0; i < pets.length; i++) {
         var pet = pets[i];
         // check pet level
-        if (parseInt(pet.level) < require_pet_level) continue;
+        if (parseInt(pet.level) < begin_pet_level || parseInt(pet.level) > end_pet_level) continue;
+        console.log(pet.level);
         //if pet has fight_count >= 5 => say no!
         if (!pet.fight_available) continue;
 
