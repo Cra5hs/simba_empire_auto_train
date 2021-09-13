@@ -66,8 +66,8 @@ var fight_rewards = [1, 2];
 //Default: Just only fight if win percent >= 70%
 var min_win_percent = 70;
 
-//Just only fight if pet level >= 7
-var require_pet_level = 7;
+var start_fight_pet_level = 7;
+var end_fight_pet_level = 19;
 
 module.exports = {
   async run() {
@@ -94,7 +94,7 @@ module.exports = {
       for (var i = 0; i < pets.length; i++) {
         var pet = pets[i];
         // check pet level
-        if (parseInt(pet.level) < require_pet_level) continue;
+        if (parseInt(pet.level) < start_fight_pet_level || parseInt(pet.level) > end_fight_pet_level) continue;
         //if pet has fight_count >= 5 => say no!
         if (!pet.fight_available) continue;
 
