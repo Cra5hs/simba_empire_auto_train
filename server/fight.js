@@ -96,7 +96,7 @@ module.exports = {
         var pet = pets[i];
         // check pet level
         if (parseInt(pet.level) < begin_pet_level || parseInt(pet.level) > end_pet_level) continue;
-        console.log(pet.level);
+      
         //if pet has fight_count >= 5 => say no!
         if (!pet.fight_available) continue;
 
