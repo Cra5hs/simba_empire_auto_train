@@ -43,4 +43,20 @@ var wallet = {
 5.  ```npm install```
 6.  ```npm run start:proc```
 
+
+Result
+```
+==|===> FIGHT ERROR <===|==
+==|===> FINDING MATCH <===|==
+[FIGHT] RATE = 72.02821756987625% ==|===> PET XXXXX - PW 80245.378824 vs MONSTER Jungle Ghost - PW 98102 <===|==
+==|===> FIGHT DONE <===|==
+==|===> FINDING MATCH <===|==
+[FIGHT] RATE = 99% ==|===> PET XXXXX - PW 163538.02451 vs MONSTER Jungle Ghost - PW 98102 <===|==
+==|===> FIGHT DONE <===|==
+==|===> FINDING MATCH <===|==
+[FIGHT] RATE = 99% ==|===> PET XXXXX - PW 163538.02451 vs MONSTER Jungle Ghost - PW 98102 <===|==
+==|===> FIGHT DONE <===|==
+==|===> FINDING MATCH <===|==
+```
+
 So ez game!!
