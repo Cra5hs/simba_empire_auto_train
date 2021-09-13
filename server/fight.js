@@ -67,7 +67,7 @@ var fight_rewards = [1, 2];
 var min_win_percent = 70;
 
 //Just only fight if pet level >= 7
-var start_pet_level = 7;
+var require_pet_level = 7;
 
 module.exports = {
   async run() {
