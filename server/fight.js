@@ -66,6 +66,9 @@ var fight_rewards = [1, 2];
 //Default: Just only fight if win percent >= 70%
 var min_win_percent = 70;
 
+//Just only fight if pet level >= 7
+var require_pet_level = 7;
+
 module.exports = {
   async run() {
     var that = this;
@@ -90,10 +93,10 @@ module.exports = {
       //find and match fight
       for (var i = 0; i < pets.length; i++) {
         var pet = pets[i];
+        // check pet level
+        if (parseInt(pet.level) < require_pet_level) continue;
         //if pet has fight_count >= 5 => say no!
-        if (!pet.fight_available) {
-          continue;
-        }
+        if (!pet.fight_available) continue;
 
         pet_fight = null;
         monster_fight = null;
@@ -120,6 +123,7 @@ module.exports = {
               break;
             } else {
               console.log(`[RW LOW LEVEL, WAIT NEXT TURN] RATE = ${win_percent}% ==|===> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power} <===|== ${monster.level_reward}`);
+              break;
             }
           }
         }
