@@ -6,6 +6,15 @@ If you share the private key with a stranger, you will lose all your money, so y
 **Please do not share the private key with anyone, including relatives.<br/>
 ⚠️ ⚠️ ⚠️ WARNING ⚠️ ⚠️ ⚠️**
 
+**Feature:**
+```
+Auto train if
+1. Win rate > 70% (U can customize)
+2. Reward if win is medium or high (U can customize)
+3. Monster's level >= Pet's level - 1
+```
+
+
 **How to start:**
 
 1.  Install nodejs
