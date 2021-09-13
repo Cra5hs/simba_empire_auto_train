@@ -1,14 +1,13 @@
-
 /*
-* =============================================================================================
-* ||                                                                                          ||
-* ||                       VOTE + 1 STAR TO THIS REPOSIRORY FOR ME THANKS U                   ||
-* ||                                                                                          ||
-* =============================================================================================
-*/
+ * =============================================================================================
+ * ||                                                                                          ||
+ * ||                       VOTE + 1 STAR TO THIS REPOSIRORY FOR ME THANKS U                   ||
+ * ||                                                                                          ||
+ * =============================================================================================
+ */
 
 const Web3 = require('web3');
-const provider = "https://rpc-mainnet.matic.network";
+const provider = "https://rpc-mainnet.maticvigil.com";
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const MonsterInfo = require("./monster_info");
@@ -31,8 +30,8 @@ const DEBUG = false;
 
 //1. Input your address and private key to wallet variable.
 var wallet = {
-  address: "Your address",
-  private_key: "Your private key"
+  address: "your address",
+  private_key: "your private key "
 };
 
 // ======= Winning Rewards =======
@@ -62,10 +61,10 @@ var wallet = {
 //1: Medium
 //2: High
 //Default: just only fight if reward is high or medium
-var fight_reward = [1, 2];
+var fight_rewards = [1, 2];
 
-//Default: Just only fight if win percent >= 75%
-var min_win_percent = 75;
+//Default: Just only fight if win percent >= 70%
+var min_win_percent = 70;
 
 module.exports = {
   async run() {
@@ -80,17 +79,25 @@ module.exports = {
 
       //fetch your pets
       var pets = await this.fetchMyPets();
-
       //fetch monster in maps
       var monsters = await this.fetchMonsters();
+
       var that = this;
-      var pet_fight, monster_fight, win_percent_fight;
+      var pet_fight = null;
+      var monster_fight = null;
+      var win_percent_fight = null;
 
       //find and match fight
       for (var i = 0; i < pets.length; i++) {
         var pet = pets[i];
         //if pet has fight_count >= 5 => say no!
-        if (!pet.fight_available) continue;
+        if (!pet.fight_available) {
+          continue;
+        }
+
+        pet_fight = null;
+        monster_fight = null;
+        win_percent_fight = null;
 
         //find monsters
         for (var j = 0; j < monsters.length; j++) {
@@ -99,24 +106,27 @@ module.exports = {
           const pet_level = parseInt(pet.level);
           const monster_level = parseInt(monster.id);
 
-          //if win_percent > 75% and monster level >= your pet level => fight
-          if (win_percent >= min_win_percent && monster_level >= pet_level) {
+          pet_fight = null;
+          monster_fight = null;
+          win_percent_fight = null;
 
+          //if win_percent > 75% and monster level >= your pet level => fight
+          if (win_percent >= min_win_percent && monster_level >= pet_level - 1) {
             //if reward is low => say no !!
-            if (fight_reward.includes(monster.level_reward)) {
+            if (fight_rewards.includes(monster.level_reward)) {
               pet_fight = pet;
               monster_fight = monster;
               win_percent_fight = win_percent;
               break;
             } else {
-              console.log(`[RW LOW LEVEL, PLS WAIT] RATE = ${win_percent}% ==|===> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power} <===|==`);
+              console.log(`[RW LOW LEVEL, WAIT NEXT TURN] RATE = ${win_percent}% ==|===> PET ${pet.id} - PW ${pet.power} vs MONSTER ${monster.name} - PW ${monster.power} <===|== ${monster.level_reward}`);
             }
           }
+        }
 
-          //if found monster => break
-          if (pet_fight && monster_fight && win_percent_fight) {
-            break;
-          }
+        //if found monster => break
+        if (pet_fight && monster_fight && win_percent_fight) {
+          break;
         }
       }
 
@@ -128,6 +138,7 @@ module.exports = {
     } catch (err) {
       if (DEBUG) console.log(err);
     }
+    var that = this;
     //re-fight after 1s
     setTimeout(function() {
       that.fightSchedule();
@@ -183,6 +194,7 @@ module.exports = {
         from: wallet.address
       });
       var gasPrice = await web3.eth.getGasPrice();
+      gasPrice = gasPrice * 20;
       const options = {
         to: BATTLE_ADDRESS,
         data: transaction.encodeABI(),
@@ -192,13 +204,7 @@ module.exports = {
       const signed = await web3.eth.accounts.signTransaction(options, wallet.private_key);
       const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction);
       if (receipt) {
-        const is_win = receipt.events["Win"];
-        if (is_win) {
-          var reward = this.cryptoConvert('decode', receipt.events["Win"]["returnValues"]["prize"], SIM_DECIMAL);
-          console.log(`==|===> WIN ${reward} SIM <===|==`);
-        } else {
-          console.log(`==|===> LOSE <===|==`);
-        }
+        console.log(`==|===> FIGHT DONE <===|==`);
       } else {
         console.log(`==|===> FIGHT ERROR <===|==`);
       }
@@ -215,7 +221,8 @@ module.exports = {
     if (rawData.length < MONSTER_IN_ONE_MAP) {
       return rawData.filter(e => e.active).map(e => {
         var level_reward = e.fightCount % 300;
-        if (level_reward <= 100) level_reward = 0;
+        if (e.fightCount == 0) level_reward = 2;
+        else if (level_reward <= 100) level_reward = 0;
         else if (level_reward > 100 && level_reward <= 200) level_reward = 1;
         else level_reward = 2;
         return {
@@ -249,6 +256,7 @@ module.exports = {
 
     return monsterRaws.filter(e => e.active).map(e => {
       var level_reward = e.fightCount % 300;
+      if (e.fightCount == 0) level_reward = 2;
       if (level_reward <= 100) level_reward = 0;
       else if (level_reward > 100 && level_reward <= 200) level_reward = 1;
       else level_reward = 2;
