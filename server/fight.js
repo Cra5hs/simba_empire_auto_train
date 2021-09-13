@@ -225,10 +225,10 @@ module.exports = {
     if (rawData.length < MONSTER_IN_ONE_MAP) {
       return rawData.filter(e => e.active).map(e => {
         var level_reward = e.fightCount % 300;
-        if (e.fightCount == 0) level_reward = 2;
-        else if (level_reward <= 100) level_reward = 0;
-        else if (level_reward > 100 && level_reward <= 200) level_reward = 1;
-        else level_reward = 2;
+        if (e.fightCount == 0) level_reward = 2; // HIGH
+        if (level_reward <= 100) level_reward = 2; // HIGH
+        else if (level_reward > 100 && level_reward <= 200) level_reward = 1; //MEDIUM
+        else level_reward = 0; //LOW
         return {
           id: e.id,
           cl: e.cl,
@@ -260,10 +260,10 @@ module.exports = {
 
     return monsterRaws.filter(e => e.active).map(e => {
       var level_reward = e.fightCount % 300;
-      if (e.fightCount == 0) level_reward = 2;
-      if (level_reward <= 100) level_reward = 0;
-      else if (level_reward > 100 && level_reward <= 200) level_reward = 1;
-      else level_reward = 2;
+      if (e.fightCount == 0) level_reward = 2; // HIGH
+      if (level_reward <= 100) level_reward = 2; // HIGH
+      else if (level_reward > 100 && level_reward <= 200) level_reward = 1; //MEDIUM
+      else level_reward = 0; //LOW
       return {
         id: e.id,
         cl: e.cl,
