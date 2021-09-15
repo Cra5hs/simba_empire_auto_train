@@ -7,7 +7,7 @@
  */
 
 const Web3 = require('web3');
-const provider = "https://rpc-mainnet.maticvigil.com";
+const provider = "rpc";
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const MonsterInfo = require("./monster_info");
@@ -21,7 +21,7 @@ const ANIMAL_ABI = require("./animal_abi.json");
 const CONTRACT_ANIMAL = new web3.eth.Contract(ANIMAL_ABI, ANIMAL_ADDRESS);
 
 
-const BATTLE_ADDRESS = "0x9aA2F05b70386fFe0A273C757fE02C21da021d62";
+const BATTLE_ADDRESS = "0xFA1a16288ecB0c2844Dd388cfb5f1EFdcE5f4A91";
 const BATTLE_ABI = require("./battle_abi.json");
 const CONTRACT_BATTLE = new web3.eth.Contract(BATTLE_ABI, BATTLE_ADDRESS);
 
@@ -30,8 +30,8 @@ const DEBUG = false;
 
 //1. Input your address and private key to wallet variable.
 var wallet = {
-  address: "your address",
-  private_key: "your private key"
+  address: "address",
+  private_key: "private key"
 };
 
 // ======= Winning Rewards =======
@@ -61,7 +61,7 @@ var wallet = {
 //1: Medium
 //2: High
 //Default: just only fight if reward is high or medium
-var fight_rewards = [1, 2];
+var fight_rewards = [0, 1, 2];
 
 //Default: Just only fight if win percent >= 70%
 var min_win_percent = 70;
@@ -94,9 +94,10 @@ module.exports = {
       //find and match fight
       for (var i = 0; i < pets.length; i++) {
         var pet = pets[i];
+        const pet_level = parseInt(pet.level);
         // check pet level
-        if (parseInt(pet.level) < begin_pet_level || parseInt(pet.level) > end_pet_level) continue;
-      
+        if (pet_level < begin_pet_level || pet_level > end_pet_level) continue;
+
         //if pet has fight_count >= 5 => say no!
         if (!pet.fight_available) continue;
 
@@ -108,8 +109,7 @@ module.exports = {
         for (var j = 0; j < monsters.length; j++) {
           var monster = monsters[j];
           var win_percent = that.winPercent(pet, monster);
-          const pet_level = parseInt(pet.level);
-          const monster_level = parseInt(monster.id);
+          const monster_level = monster.level;
 
           pet_fight = null;
           monster_fight = null;
@@ -148,7 +148,7 @@ module.exports = {
     //re-fight after 1s
     setTimeout(function() {
       that.fightSchedule();
-    }, 1000);
+    }, 2000);
   },
 
 
@@ -186,10 +186,22 @@ module.exports = {
     const monsterFightLimitPerDay = await CONTRACT_BATTLE.methods.monsterFightLimitPerDay().call();
     const data = await CONTRACT_BATTLE.methods.getMonsters().call();
     const json = this.getMonsterMaps(data);
+
     json.sort(function(a, b) {
-      return parseInt(b.id) - parseInt(a.id);
+      return a.power - b.power;
     });
-    return json;
+    var results = [];
+
+    json.forEach((item, i) => {
+      results.push({
+        ...item,
+        level: i
+      });
+    });
+    results.sort(function(a, b) {
+      return b.level - a.level;
+    });
+    return results;
   },
 
   async fight(pet, monster, win_percent) {
