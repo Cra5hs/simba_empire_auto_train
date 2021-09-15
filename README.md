@@ -49,6 +49,12 @@ var wallet = {
 };
 ```
 
+Config level - Default 7 -> 19 will auto train
+```
+//Just only fight if pet has level in range 7 -> 19
+var begin_pet_level = 7;
+var end_pet_level = 19;
+```
 5.  ```npm install```
 6.  ```npm run start:proc```
 
@@ -69,3 +75,8 @@ Result
 ```
 
 So ez game!!
+
+
+```
+Donate: 0x843C9034e9cEcCEc85ceCC1B87dB3e260e9ea5eE (MATIC)
+```
