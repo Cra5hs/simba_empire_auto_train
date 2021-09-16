@@ -67,7 +67,7 @@ var fight_rewards = [2];
 var min_win_percent = 70;
 
 //Just only fight if pet has level in range 7 -> 19
-var begin_pet_level = 5;
+var begin_pet_level = 10;
 var end_pet_level = 19;
 
 module.exports = {
