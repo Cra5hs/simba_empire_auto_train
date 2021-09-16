@@ -7,7 +7,7 @@
  */
 
 const Web3 = require('web3');
-const provider = "rpc";
+const provider = "your rpc";
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const MonsterInfo = require("./monster_info");
@@ -31,7 +31,7 @@ const DEBUG = false;
 //1. Input your address and private key to wallet variable.
 var wallet = {
   address: "address",
-  private_key: "private key"
+  private_key: "private_key"
 };
 
 // ======= Winning Rewards =======
@@ -61,13 +61,13 @@ var wallet = {
 //1: Medium
 //2: High
 //Default: just only fight if reward is high or medium
-var fight_rewards = [0, 1, 2];
+var fight_rewards = [2];
 
 //Default: Just only fight if win percent >= 70%
 var min_win_percent = 70;
 
 //Just only fight if pet has level in range 7 -> 19
-var begin_pet_level = 7;
+var begin_pet_level = 5;
 var end_pet_level = 19;
 
 module.exports = {
