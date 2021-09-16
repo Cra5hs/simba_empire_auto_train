@@ -7,7 +7,7 @@
  */
 
 const Web3 = require('web3');
-const provider = "your rpc";
+const provider = "YOUR RPC";
 const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 
 const MonsterInfo = require("./monster_info");
@@ -30,8 +30,8 @@ const DEBUG = false;
 
 //1. Input your address and private key to wallet variable.
 var wallet = {
-  address: "address",
-  private_key: "private_key"
+  address: "YOUR ADDRESS",
+  private_key: "YOUR PRIVATE KEY"
 };
 
 // ======= Winning Rewards =======
@@ -61,13 +61,13 @@ var wallet = {
 //1: Medium
 //2: High
 //Default: just only fight if reward is high or medium
-var fight_rewards = [2];
+var fight_rewards = [1,2];
 
 //Default: Just only fight if win percent >= 70%
-var min_win_percent = 70;
+var min_win_percent = 65;
 
 //Just only fight if pet has level in range 7 -> 19
-var begin_pet_level = 10;
+var begin_pet_level = 5;
 var end_pet_level = 19;
 
 module.exports = {
@@ -238,10 +238,10 @@ module.exports = {
     var that = this;
     if (rawData.length < MONSTER_IN_ONE_MAP) {
       return rawData.filter(e => e.active).map(e => {
-        var level_reward = e.fightCount % 300;
+        var level_reward = e.fightCount % 500;
         if (e.fightCount == 0) level_reward = 2; // HIGH
-        if (level_reward <= 100) level_reward = 2; // HIGH
-        else if (level_reward > 100 && level_reward <= 200) level_reward = 1; //MEDIUM
+        if (level_reward <= 150) level_reward = 2; // HIGH
+        else if (level_reward > 150 && level_reward <= 300) level_reward = 1; //MEDIUM
         else level_reward = 0; //LOW
         return {
           id: e.id,
@@ -273,11 +273,11 @@ module.exports = {
 
 
     return monsterRaws.filter(e => e.active).map(e => {
-      var level_reward = e.fightCount % 300;
-      if (e.fightCount == 0) level_reward = 2; // HIGH
-      if (level_reward <= 100) level_reward = 2; // HIGH
-      else if (level_reward > 100 && level_reward <= 200) level_reward = 1; //MEDIUM
-      else level_reward = 0; //LOW
+      var level_reward = e.fightCount % 500;
+        if (e.fightCount == 0) level_reward = 2; // HIGH
+        if (level_reward <= 150) level_reward = 2; // HIGH
+        else if (level_reward > 150 && level_reward <= 300) level_reward = 1; //MEDIUM
+        else level_reward = 0; //LOW
       return {
         id: e.id,
         cl: e.cl,
